@@ -1,6 +1,46 @@
+import { useState } from "react";
 import { Form, Input, AutoComplete, Space } from "antd";
+import type { Customer, Option } from "./EmailForm.default";
+
+const URL =
+  "https://686547495b5d8d0339808f5d.mockapi.io/spitogatos/api/customer-email-lookup";
 
 function EmailForm() {
+  const [options, setOptions] = useState<Option[]>([]);
+  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+
+  //Events
+  const onEmailSearch = async (value: string): Promise<void> => {
+    try {
+      const res = await fetch(URL);
+      const data: Customer[] = await res.json();
+
+      const filteredData: Customer[] = data.filter((item) => {
+        const { email } = item;
+        return email.toLocaleLowerCase().startsWith(value.toLocaleLowerCase());
+      });
+
+      const inputOptions: Option[] = filteredData.map((item) => {
+        return {
+          id: item.id,
+          label: item.email,
+          value: item.email,
+        };
+      });
+
+      setOptions(inputOptions);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onEmailSelect = (value: string): void => {
+    //Check to not have doublicated emails
+    if (!selectedEmails.includes(value)) {
+      setSelectedEmails((prev) => [...prev, value]);
+    }
+  };
+
   return (
     <Form
       className="w-[512px]"
@@ -11,7 +51,12 @@ function EmailForm() {
     >
       {/* Email */}
       <Form.Item name={"email"} label={"Email"}>
-        <AutoComplete placeholder="Enter email" />
+        <AutoComplete
+          placeholder="Enter email"
+          onSearch={onEmailSearch}
+          onSelect={onEmailSelect}
+          options={options}
+        />
       </Form.Item>
 
       <Form.Item label="Recipients List">
