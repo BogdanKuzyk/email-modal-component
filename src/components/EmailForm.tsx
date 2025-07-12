@@ -10,12 +10,22 @@ function EmailForm() {
       colon={false}
     >
       {/* Subject */}
-      <Form.Item name="subject" label="Subject">
+      <Form.Item name="subject" label="Subject" required>
         <Input placeholder="Enter email subject" />
       </Form.Item>
 
       {/* Description */}
-      <Form.Item name={"description"} label="Description">
+      <Form.Item
+        name={"description"}
+        label="Description"
+        rules={[
+          {
+            required: true,
+            min: 10,
+            message: "Please enter minimum 10 characters  ",
+          },
+        ]}
+      >
         <Input.TextArea
           showCount
           minLength={10}
