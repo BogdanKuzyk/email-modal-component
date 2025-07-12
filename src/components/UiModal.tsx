@@ -17,6 +17,7 @@ function UiModal(props: UiModalProps) {
       maskClosable={false}
       width={"auto"}
       height={"auto"}
+      destroyOnHidden
     >
       {props.children}
     </Modal>
