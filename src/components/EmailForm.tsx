@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Input, AutoComplete, Space, Tag } from "antd";
+import { Form, Input, AutoComplete, Space, Tag, Alert } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import type { Customer, Option } from "./EmailForm.default";
 
@@ -9,9 +9,11 @@ const URL =
 function EmailForm() {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  const [error, setError] = useState<boolean>(false);
 
   //Events
   const onEmailSearch = async (value: string): Promise<void> => {
+    setError(false);
     try {
       const res = await fetch(URL);
       const data: Customer[] = await res.json();
@@ -31,7 +33,7 @@ function EmailForm() {
 
       setOptions(inputOptions);
     } catch (error) {
-      console.log(error);
+      setError(true);
     }
   };
 
@@ -48,80 +50,92 @@ function EmailForm() {
   };
 
   return (
-    <Form
-      className="w-[512px]"
-      layout={"vertical"}
-      autoComplete="off"
-      variant={"filled"}
-      colon={false}
-    >
-      {/* Email */}
-      <Form.Item name={"email"} label={"Email"}>
-        <AutoComplete
-          placeholder="Enter email"
-          onSearch={onEmailSearch}
-          onSelect={onEmailSelect}
-          options={options}
-        />
-      </Form.Item>
+    <>
+      {/* Form */}
+      <Form
+        className="w-[512px]"
+        layout={"vertical"}
+        autoComplete="off"
+        variant={"filled"}
+        colon={false}
+      >
+        {/* Email */}
+        <Form.Item name={"email"} label={"Email"}>
+          <AutoComplete
+            placeholder="Enter email"
+            onSearch={onEmailSearch}
+            onSelect={onEmailSelect}
+            options={options}
+          />
+        </Form.Item>
 
-      <Form.Item label="Recipients List">
-        <Space
-          className="border border-gray-300 rounded-md h-[130px] p-2 w-full  overflow-y-auto flex-wrap"
-          align="start"
+        <Form.Item label="Recipients List">
+          <Space
+            className="border border-gray-300 rounded-md h-[130px] p-2 w-full  overflow-y-auto flex-wrap"
+            align="start"
+          >
+            {!selectedEmails.length && (
+              <p className="text-gray-400 select-none">No emails selected</p>
+            )}
+            {selectedEmails.map((email) => (
+              <Tag
+                key={email}
+                closable
+                onClose={() => onEmailDelete(email)}
+                closeIcon={<CloseOutlined />}
+                className="select-none "
+              >
+                {email}
+              </Tag>
+            ))}
+          </Space>
+        </Form.Item>
+
+        {/* Subject */}
+        <Form.Item
+          name="subject"
+          label="Subject"
+          rules={[
+            {
+              required: true,
+              message: "Email subject is required",
+            },
+          ]}
         >
-          {!selectedEmails.length && (
-            <p className="text-gray-400 select-none">No emails selected</p>
-          )}
-          {selectedEmails.map((email) => (
-            <Tag
-              key={email}
-              closable
-              onClose={() => onEmailDelete(email)}
-              closeIcon={<CloseOutlined />}
-              className="select-none "
-            >
-              {email}
-            </Tag>
-          ))}
-        </Space>
-      </Form.Item>
+          <Input placeholder="Enter email subject" />
+        </Form.Item>
 
-      {/* Subject */}
-      <Form.Item
-        name="subject"
-        label="Subject"
-        rules={[
-          {
-            required: true,
-            message: "Email subject is required",
-          },
-        ]}
-      >
-        <Input placeholder="Enter email subject" />
-      </Form.Item>
+        {/* Description */}
+        <Form.Item
+          name={"description"}
+          label="Description"
+          rules={[
+            {
+              required: true,
+              min: 10,
+              message: "Please enter minimum 10 characters  ",
+            },
+          ]}
+        >
+          <Input.TextArea
+            showCount
+            minLength={10}
+            maxLength={800}
+            placeholder="Enter the body of the email"
+            className="h-[120px]"
+          />
+        </Form.Item>
+      </Form>
 
-      {/* Description */}
-      <Form.Item
-        name={"description"}
-        label="Description"
-        rules={[
-          {
-            required: true,
-            min: 10,
-            message: "Please enter minimum 10 characters  ",
-          },
-        ]}
-      >
-        <Input.TextArea
-          showCount
-          minLength={10}
-          maxLength={800}
-          placeholder="Enter the body of the email"
-          className="h-[120px]"
+      {/* Error Message */}
+      {error && (
+        <Alert
+          className="mb-2"
+          message="Something went wrong while fetching emails, please try again"
+          type="error"
         />
-      </Form.Item>
-    </Form>
+      )}
+    </>
   );
 }
 
