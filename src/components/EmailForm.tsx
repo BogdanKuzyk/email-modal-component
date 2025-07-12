@@ -10,7 +10,16 @@ function EmailForm() {
       colon={false}
     >
       {/* Subject */}
-      <Form.Item name="subject" label="Subject" required>
+      <Form.Item
+        name="subject"
+        label="Subject"
+        rules={[
+          {
+            required: true,
+            message: "Email subject is required",
+          },
+        ]}
+      >
         <Input placeholder="Enter email subject" />
       </Form.Item>
 
