@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Form, Input, AutoComplete, Space } from "antd";
+import { Form, Input, AutoComplete, Space, Tag } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 import type { Customer, Option } from "./EmailForm.default";
 
 const URL =
@@ -41,6 +42,11 @@ function EmailForm() {
     }
   };
 
+  const onEmailDelete = (value: string): void => {
+    const filteredEmails = selectedEmails.filter((email) => email !== value);
+    setSelectedEmails(filteredEmails);
+  };
+
   return (
     <Form
       className="w-[512px]"
@@ -64,7 +70,20 @@ function EmailForm() {
           className="border border-gray-300 rounded-md h-[130px] p-2 w-full  overflow-y-auto flex-wrap"
           align="start"
         >
-          placeholder
+          {!selectedEmails.length && (
+            <p className="text-gray-400 select-none">No emails selected</p>
+          )}
+          {selectedEmails.map((email) => (
+            <Tag
+              key={email}
+              closable
+              onClose={() => onEmailDelete(email)}
+              closeIcon={<CloseOutlined />}
+              className="select-none "
+            >
+              {email}
+            </Tag>
+          ))}
         </Space>
       </Form.Item>
 
