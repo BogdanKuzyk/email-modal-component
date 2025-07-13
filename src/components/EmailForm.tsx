@@ -52,6 +52,8 @@ function EmailForm(props: EmailFormProps) {
     if (!selectedEmails.includes(value)) {
       setSelectedEmails((prev) => [...prev, value]);
       props.form.resetFields(["email"]);
+      //Reset options to not keep custom email input from previous inserts
+      setOptions([]);
     }
   };
 
