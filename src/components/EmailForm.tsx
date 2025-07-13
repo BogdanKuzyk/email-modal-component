@@ -5,6 +5,7 @@ import { CloseOutlined } from "@ant-design/icons";
 import type { Option } from "./EmailForm.default";
 import { getCustomers } from "../repository/data.repository";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 interface EmailFormProps {
   readonly form: FormInstance;
   readonly trackRecipients: (recipients: string[]) => void;
@@ -23,6 +24,7 @@ function EmailForm(props: EmailFormProps) {
   //Events
   const onEmailSearch = (inputValue: string): void => {
     setError(false);
+
     getCustomers()
       .then((data) => {
         const filteredOptions: Option[] = data.filter((item) => {
@@ -32,7 +34,13 @@ function EmailForm(props: EmailFormProps) {
             .startsWith(inputValue.toLocaleLowerCase());
         });
 
-        setOptions(filteredOptions);
+        //Add filtered options and add custom email only if email valid
+        const isValidEmail = EMAIL_REGEX.test(inputValue);
+        const customEmail = isValidEmail
+          ? [{ label: inputValue, value: inputValue }]
+          : [];
+
+        setOptions([...filteredOptions, ...customEmail]);
       })
       .catch(() => {
         setError(true);
@@ -88,8 +96,7 @@ function EmailForm(props: EmailFormProps) {
           rules={[
             {
               validator: (_, value) => {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!value || emailRegex.test(value)) {
+                if (!value || EMAIL_REGEX.test(value)) {
                   return Promise.resolve();
                 }
                 return Promise.reject(
