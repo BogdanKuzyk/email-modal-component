@@ -4,8 +4,8 @@ import type { FormInstance } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import type { Option } from "./EmailForm.default";
 import { getCustomers } from "../repository/data.repository";
+import { EMAIL_REGEX } from "../utils/globalVariables";
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 interface EmailFormProps {
   readonly form: FormInstance;
   readonly trackRecipients: (recipients: string[]) => void;
