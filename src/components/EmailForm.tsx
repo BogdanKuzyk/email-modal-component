@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Form, Input, AutoComplete, Space, Tag, Alert } from "antd";
+import { Form, Input, AutoComplete, Space, Tag, Alert, Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import type { Customer, Option } from "./EmailForm.default";
+import type { Option } from "./EmailForm.default";
 import { getCustomers } from "../repository/data.repository";
 
 function EmailForm() {
@@ -10,26 +10,18 @@ function EmailForm() {
   const [error, setError] = useState<boolean>(false);
 
   //Events
-  const onEmailSearch = (value: string): void => {
+  const onEmailSearch = (inputValue: string): void => {
     setError(false);
     getCustomers()
       .then((data) => {
-        const filteredData: Customer[] = data.filter((item) => {
-          const { email } = item;
-          return email
+        const filteredOptions: Option[] = data.filter((item) => {
+          const { value } = item;
+          return value
             .toLocaleLowerCase()
-            .startsWith(value.toLocaleLowerCase());
+            .startsWith(inputValue.toLocaleLowerCase());
         });
 
-        const inputOptions: Option[] = filteredData.map((item) => {
-          return {
-            id: item.id,
-            label: item.email,
-            value: item.email,
-          };
-        });
-
-        setOptions(inputOptions);
+        setOptions(filteredOptions);
       })
       .catch(() => {
         setError(true);
@@ -68,7 +60,7 @@ function EmailForm() {
           />
         </Form.Item>
 
-        {/*Recipients Email List */}
+        {/*Recipients email list */}
         <Form.Item label="Recipients List">
           <Space
             className="border border-gray-300 rounded-md h-[130px] p-2 w-full  overflow-y-auto flex-wrap "

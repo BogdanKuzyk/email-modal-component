@@ -3,3 +3,8 @@ export interface Customer {
   readonly name: string;
   readonly email: string;
 }
+
+export interface Option {
+  readonly label: string;
+  readonly value: string;
+}
