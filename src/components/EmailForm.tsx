@@ -48,9 +48,10 @@ function EmailForm(props: EmailFormProps) {
   };
 
   const onEmailSelect = (value: string): void => {
-    //Check to not have doublicated emails
+    //Check to not have doublicated emails and reset the field after select
     if (!selectedEmails.includes(value)) {
       setSelectedEmails((prev) => [...prev, value]);
+      props.form.resetFields(["email"]);
     }
   };
 
