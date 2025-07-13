@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Input, AutoComplete, Space, Tag, Alert, Button } from "antd";
+import type { FormInstance } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import type { Option } from "./EmailForm.default";
 import { getCustomers } from "../repository/data.repository";
 
-function EmailForm() {
+interface EmailFormProps {
+  readonly form: FormInstance;
+  readonly trackRecipients: (recipients: string[]) => void;
+}
+function EmailForm(props: EmailFormProps) {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  //Lifecycle
+  useEffect(() => {
+    props.trackRecipients(selectedEmails);
+  }, [selectedEmails]);
 
   //Events
   const onEmailSearch = (inputValue: string): void => {
@@ -64,6 +74,7 @@ function EmailForm() {
     <>
       {/* Form */}
       <Form
+        form={props.form}
         className="w-[512px]"
         layout={"vertical"}
         autoComplete="off"
