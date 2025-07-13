@@ -17,16 +17,21 @@ function EmailForm(props: EmailFormProps) {
   const [loading, setLoading] = useState<boolean>(false);
 
   //Lifecycle
+
   useEffect(() => {
+    //Update recipients in parent component in order to log them on submit
     props.trackRecipients(selectedEmails);
   }, [selectedEmails]);
 
   //Events
+
   const onEmailSearch = (inputValue: string): void => {
     setError(false);
 
+    //Fetch customers Data
     getCustomers()
       .then((data) => {
+        //Filter user emails based on search input Value
         const filteredOptions: Option[] = data.filter((item) => {
           const { value } = item;
           return value
@@ -34,12 +39,15 @@ function EmailForm(props: EmailFormProps) {
             .startsWith(inputValue.toLocaleLowerCase());
         });
 
-        //Add filtered options and add custom email only if email valid
+        //Check if input value is a correct email
         const isValidEmail = EMAIL_REGEX.test(inputValue);
+
+        //Conditionaly add custom input value if it has valid formmat
         const customEmail = isValidEmail
           ? [{ label: inputValue, value: inputValue }]
           : [];
 
+        //Update options
         setOptions([...filteredOptions, ...customEmail]);
       })
       .catch(() => {
@@ -52,25 +60,30 @@ function EmailForm(props: EmailFormProps) {
     const uniqueEmails = createUniqueValues(selectedEmails, value);
     //Reset the field after select
     props.form.resetFields(["email"]);
-    //Set selected emails
+    //Update selected emails
     setSelectedEmails(uniqueEmails);
-    //Reset options to not keep custom email input from previous inserts
+    //Reset options to not keep custom email inputs from previous inserts
     setOptions([]);
   };
 
   const onEmailDelete = (value: string): void => {
+    //Filter emails in order to remove the the deleted one
     const filteredEmails = selectedEmails.filter((email) => email !== value);
+    //Update selected emails
     setSelectedEmails(filteredEmails);
   };
 
   const onAddAllCustomers = (): void => {
     setLoading(true);
 
+    //Fetch customers Data
     getCustomers()
       .then((data) => {
+        //Extract customer emails
         const emails = data.map((customer) => customer.value);
-        //Create a set to avoid duplicated values and allow to preserve previously inserted emails
+        //Create a set to avoid duplicated values and allow to preserve previously selected emails
         const uniqueEmails = createUniqueValues(selectedEmails, emails);
+        //Update selected emails
         setSelectedEmails(uniqueEmails);
         setLoading(false);
       })

@@ -15,6 +15,7 @@ function App() {
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
   //Lifecycle
+
   useEffect(() => {
     if (showSuccess) {
       messageApi.open({
@@ -26,6 +27,7 @@ function App() {
   }, [showSuccess, messageApi]);
 
   //Events
+
   const onEmailModalOpen = (): void => {
     setModalOpen(true);
   };
@@ -36,18 +38,26 @@ function App() {
   };
 
   const onSubmit = (): void => {
+    //Extract from values
     const { subject, description } = values;
 
     setLoading(true);
+
+    //Simulate post request
     setTimeout(() => {
+      //Log form data
       console.log({
         Recipirents: recipients,
         Subject: subject,
         Description: description,
       });
+
       setLoading(false);
+      //Show succes message
       setShowSuccess(true);
+      //Reset form fields
       form.resetFields();
+      //Close modal after submmition
       setModalOpen(false);
     }, 2000);
   };
