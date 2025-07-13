@@ -75,7 +75,7 @@ function EmailForm(props: EmailFormProps) {
       {/* Form */}
       <Form
         form={props.form}
-        className="w-[512px]"
+        className="w-full"
         layout={"vertical"}
         autoComplete="off"
         variant={"filled"}
@@ -131,7 +131,7 @@ function EmailForm(props: EmailFormProps) {
         </Form.Item>
 
         {/* Email action buttons */}
-        <Space className="mb-2">
+        <Space className="mb-2 flex-wrap">
           <Button type="primary" onClick={onAddAllCustomers} loading={loading}>
             Add All
           </Button>

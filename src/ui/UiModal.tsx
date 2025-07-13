@@ -16,8 +16,6 @@ function UiModal(props: UiModalProps) {
       onCancel={props.onCancel}
       centered
       maskClosable={false}
-      width={"auto"}
-      height={"auto"}
       destroyOnHidden
       footer={props.actions}
     >
