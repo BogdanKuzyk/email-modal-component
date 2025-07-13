@@ -1,4 +1,4 @@
-import { Modal } from "antd";
+import { Modal, Row } from "antd";
 
 export interface UiModalProps {
   readonly open: boolean;
@@ -17,7 +17,7 @@ function UiModal(props: UiModalProps) {
       centered
       maskClosable={false}
       destroyOnHidden
-      footer={props.actions}
+      footer={<Row className="flex justify-end pt-3">{props.actions}</Row>}
     >
       {props.children}
     </Modal>
