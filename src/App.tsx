@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button, Space, Form, message } from "antd";
 import "./App.css";
-import UiModal from "./components/UiModal";
+import UiModal from "./ui/UiModal";
 import EmailForm from "./components/EmailForm";
 import type { CustomersEmailForm } from "./components/EmailForm.default";
 
