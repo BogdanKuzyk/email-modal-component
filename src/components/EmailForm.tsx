@@ -2,9 +2,7 @@ import { useState } from "react";
 import { Form, Input, AutoComplete, Space, Tag, Alert } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import type { Customer, Option } from "./EmailForm.default";
-
-const URL =
-  "https://686547495b5d8d0339808f5d.mockapi.io/spitogatos/api/customer-email-lookup";
+import { getCustomers } from "../repository/data.repository";
 
 function EmailForm() {
   const [options, setOptions] = useState<Option[]>([]);
@@ -12,29 +10,30 @@ function EmailForm() {
   const [error, setError] = useState<boolean>(false);
 
   //Events
-  const onEmailSearch = async (value: string): Promise<void> => {
+  const onEmailSearch = (value: string): void => {
     setError(false);
-    try {
-      const res = await fetch(URL);
-      const data: Customer[] = await res.json();
+    getCustomers()
+      .then((data) => {
+        const filteredData: Customer[] = data.filter((item) => {
+          const { email } = item;
+          return email
+            .toLocaleLowerCase()
+            .startsWith(value.toLocaleLowerCase());
+        });
 
-      const filteredData: Customer[] = data.filter((item) => {
-        const { email } = item;
-        return email.toLocaleLowerCase().startsWith(value.toLocaleLowerCase());
+        const inputOptions: Option[] = filteredData.map((item) => {
+          return {
+            id: item.id,
+            label: item.email,
+            value: item.email,
+          };
+        });
+
+        setOptions(inputOptions);
+      })
+      .catch(() => {
+        setError(true);
       });
-
-      const inputOptions: Option[] = filteredData.map((item) => {
-        return {
-          id: item.id,
-          label: item.email,
-          value: item.email,
-        };
-      });
-
-      setOptions(inputOptions);
-    } catch (error) {
-      setError(true);
-    }
   };
 
   const onEmailSelect = (value: string): void => {
@@ -69,9 +68,10 @@ function EmailForm() {
           />
         </Form.Item>
 
+        {/*Recipients Email List */}
         <Form.Item label="Recipients List">
           <Space
-            className="border border-gray-300 rounded-md h-[130px] p-2 w-full  overflow-y-auto flex-wrap"
+            className="border border-gray-300 rounded-md h-[130px] p-2 w-full  overflow-y-auto flex-wrap "
             align="start"
           >
             {!selectedEmails.length && (
