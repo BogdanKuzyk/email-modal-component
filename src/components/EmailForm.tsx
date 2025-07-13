@@ -8,6 +8,7 @@ function EmailForm() {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
   const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   //Events
   const onEmailSearch = (inputValue: string): void => {
@@ -38,6 +39,25 @@ function EmailForm() {
   const onEmailDelete = (value: string): void => {
     const filteredEmails = selectedEmails.filter((email) => email !== value);
     setSelectedEmails(filteredEmails);
+  };
+
+  const onAddAllCustomers = (): void => {
+    setLoading(true);
+
+    getCustomers()
+      .then((data) => {
+        const emails = data.map((customer) => customer.value);
+        setSelectedEmails(emails);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+        setError(true);
+      });
+  };
+
+  const onRemoveAllCustomers = (): void => {
+    setSelectedEmails([]);
   };
 
   return (
@@ -85,8 +105,10 @@ function EmailForm() {
 
         {/* Email action buttons */}
         <Space className="mb-2">
-          <Button type="primary">ADD ALL CUSTOMERS</Button>
-          <Button>REMOVE ALL CUSTOMERS</Button>
+          <Button type="primary" onClick={onAddAllCustomers} loading={loading}>
+            Add All
+          </Button>
+          <Button onClick={onRemoveAllCustomers}>Remove All</Button>
         </Space>
 
         {/* Subject */}
