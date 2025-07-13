@@ -32,6 +32,7 @@ function App() {
 
   const onEmailModalClose = (): void => {
     setModalOpen(false);
+    form.resetFields();
   };
 
   const onSubmit = (): void => {
@@ -46,6 +47,7 @@ function App() {
       });
       setLoading(false);
       setShowSuccess(true);
+      form.resetFields();
       setModalOpen(false);
     }, 2000);
   };
