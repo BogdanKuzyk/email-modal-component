@@ -12,6 +12,7 @@ function App() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [valid, setValid] = useState<boolean>(false);
 
   //Lifecycle
 
@@ -24,6 +25,28 @@ function App() {
       setShowSuccess(false);
     }
   }, [showSuccess, messageApi]);
+
+  useEffect(() => {
+    //Reset validation when modal closed
+    if (!modalOpen) {
+      setValid(false);
+      return;
+    }
+
+    //Validate form and set Submit disable state
+    form
+      .validateFields(["subject", "description"], { validateOnly: true })
+      .then(() => {
+        if (recipients.length > 0) {
+          setValid(true);
+        } else {
+          setValid(false);
+        }
+      })
+      .catch(() => {
+        setValid(false);
+      });
+  }, [values, recipients, form, modalOpen]);
 
   //Events
 
@@ -82,7 +105,7 @@ function App() {
               type="primary"
               onClick={onSubmit}
               loading={loading}
-              disabled={loading}
+              disabled={loading || !valid}
             >
               Submit
             </Button>
