@@ -28,7 +28,7 @@ function App() {
         onCancel={onEmailModalClose}
         actions={
           <Space>
-            <Button>Cancel</Button>
+            <Button onClick={onEmailModalClose}>Cancel</Button>
             <Button type="primary">Submit</Button>
           </Space>
         }
