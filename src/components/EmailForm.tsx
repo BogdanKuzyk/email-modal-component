@@ -48,13 +48,14 @@ function EmailForm(props: EmailFormProps) {
   };
 
   const onEmailSelect = (value: string): void => {
-    //Check to not have doublicated emails and reset the field after select
-    if (!selectedEmails.includes(value)) {
-      setSelectedEmails((prev) => [...prev, value]);
-      props.form.resetFields(["email"]);
-      //Reset options to not keep custom email input from previous inserts
-      setOptions([]);
-    }
+    //Create unique values to not have doublicated emails
+    const uniqueEmails = createUniqueValues(selectedEmails, value);
+    //Reset the field after select
+    props.form.resetFields(["email"]);
+    //Set selected emails
+    setSelectedEmails(uniqueEmails);
+    //Reset options to not keep custom email input from previous inserts
+    setOptions([]);
   };
 
   const onEmailDelete = (value: string): void => {
@@ -68,7 +69,9 @@ function EmailForm(props: EmailFormProps) {
     getCustomers()
       .then((data) => {
         const emails = data.map((customer) => customer.value);
-        setSelectedEmails(emails);
+        //Create a set to avoid duplicated values and allow to preserve previously inserted emails
+        const uniqueEmails = createUniqueValues(selectedEmails, emails);
+        setSelectedEmails(uniqueEmails);
         setLoading(false);
       })
       .catch(() => {
@@ -80,6 +83,18 @@ function EmailForm(props: EmailFormProps) {
   const onRemoveAllCustomers = (): void => {
     setSelectedEmails([]);
   };
+
+  //Methods
+
+  function createUniqueValues(prevValues: string[], value: string | string[]) {
+    //Check if value is an array , if no the put it in an array to be able to distructure
+    const inputValue = Array.isArray(value) ? value : [value];
+
+    //Create a set of unique Values
+    const uniqueValues = Array.from(new Set([...prevValues, ...inputValue]));
+
+    return uniqueValues;
+  }
 
   return (
     <>
