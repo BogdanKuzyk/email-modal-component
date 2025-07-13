@@ -14,7 +14,7 @@ function App() {
   const [loading, setLoading] = useState<boolean>(false);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
 
-  //LifeCycle
+  //Lifecycle
   useEffect(() => {
     if (showSuccess) {
       messageApi.open({
@@ -54,10 +54,12 @@ function App() {
 
   return (
     <>
+      {/* Open modal button */}
       <Button onClick={onEmailModalOpen} type="primary">
         Open Email Modal
       </Button>
 
+      {/* Modal */}
       <UiModal
         open={modalOpen}
         title={"Send Email Form"}
@@ -85,6 +87,8 @@ function App() {
           }}
         />
       </UiModal>
+
+      {/* Success Message */}
       {contextHolder}
     </>
   );
