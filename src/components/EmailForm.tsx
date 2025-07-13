@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
-import { Form, Input, AutoComplete, Space, Tag, Alert, Button } from "antd";
+import {
+  Form,
+  Input,
+  AutoComplete,
+  Space,
+  Tag,
+  Alert,
+  Button,
+  Spin,
+  Row,
+} from "antd";
 import type { FormInstance } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import type { Option } from "./EmailForm.default";
@@ -16,6 +26,7 @@ function EmailForm(props: EmailFormProps) {
   const [emailInputValue, setEmailInputValue] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [emailLoading, setEmailLoading] = useState<boolean>(false);
 
   //Lifecycle
 
@@ -26,33 +37,43 @@ function EmailForm(props: EmailFormProps) {
 
   useEffect(() => {
     //Debounce api call for 300ms onSearch
+
     const timer = setTimeout(() => {
-      setError(false);
-      //Fetch customers Data
-      getCustomers()
-        .then((data) => {
-          //Filter user emails based on search input Value
-          const filteredOptions: Option[] = data.filter((item) => {
-            const { value } = item;
-            return value
-              .toLocaleLowerCase()
-              .startsWith(emailInputValue.toLocaleLowerCase());
+      if (emailInputValue) {
+        setEmailLoading(true);
+        setError(false);
+        //Fetch customers Data
+        getCustomers()
+          .then((data) => {
+            //Filter user emails based on search input Value
+            const filteredOptions: Option[] = data.filter((item) => {
+              const { value } = item;
+              return value
+                .toLocaleLowerCase()
+                .startsWith(emailInputValue.toLocaleLowerCase());
+            });
+
+            //Check if input value is a correct email
+            const isValidEmail = EMAIL_REGEX.test(emailInputValue);
+
+            //Conditionaly add custom input value if it has valid formmat
+            const customEmail = isValidEmail
+              ? [{ label: emailInputValue, value: emailInputValue }]
+              : [];
+
+            //Update options
+            setOptions([...filteredOptions, ...customEmail]);
+
+            setEmailLoading(false);
+          })
+          .catch(() => {
+            setEmailLoading(false);
+            setError(true);
           });
-
-          //Check if input value is a correct email
-          const isValidEmail = EMAIL_REGEX.test(emailInputValue);
-
-          //Conditionaly add custom input value if it has valid formmat
-          const customEmail = isValidEmail
-            ? [{ label: emailInputValue, value: emailInputValue }]
-            : [];
-
-          //Update options
-          setOptions([...filteredOptions, ...customEmail]);
-        })
-        .catch(() => {
-          setError(true);
-        });
+      } else {
+        setOptions([]);
+        setEmailLoading(false);
+      }
     }, 300);
 
     return () => {
@@ -153,7 +174,15 @@ function EmailForm(props: EmailFormProps) {
             onSearch={onEmailSearch}
             onSelect={onEmailSelect}
             options={options}
-            notFoundContent={"No email found"}
+            notFoundContent={
+              emailLoading ? (
+                <Row className="flex items-center justify-center">
+                  <Spin />
+                </Row>
+              ) : (
+                "No emails found"
+              )
+            }
           />
         </Form.Item>
 
