@@ -13,6 +13,7 @@ interface EmailFormProps {
 function EmailForm(props: EmailFormProps) {
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  const [emailInputValue, setEmailInputValue] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -23,36 +24,46 @@ function EmailForm(props: EmailFormProps) {
     props.trackRecipients(selectedEmails);
   }, [selectedEmails]);
 
+  useEffect(() => {
+    //Debounce api call for 300ms onSearch
+    const timer = setTimeout(() => {
+      setError(false);
+      //Fetch customers Data
+      getCustomers()
+        .then((data) => {
+          //Filter user emails based on search input Value
+          const filteredOptions: Option[] = data.filter((item) => {
+            const { value } = item;
+            return value
+              .toLocaleLowerCase()
+              .startsWith(emailInputValue.toLocaleLowerCase());
+          });
+
+          //Check if input value is a correct email
+          const isValidEmail = EMAIL_REGEX.test(emailInputValue);
+
+          //Conditionaly add custom input value if it has valid formmat
+          const customEmail = isValidEmail
+            ? [{ label: emailInputValue, value: emailInputValue }]
+            : [];
+
+          //Update options
+          setOptions([...filteredOptions, ...customEmail]);
+        })
+        .catch(() => {
+          setError(true);
+        });
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [emailInputValue]);
+
   //Events
 
   const onEmailSearch = (inputValue: string): void => {
-    setError(false);
-
-    //Fetch customers Data
-    getCustomers()
-      .then((data) => {
-        //Filter user emails based on search input Value
-        const filteredOptions: Option[] = data.filter((item) => {
-          const { value } = item;
-          return value
-            .toLocaleLowerCase()
-            .startsWith(inputValue.toLocaleLowerCase());
-        });
-
-        //Check if input value is a correct email
-        const isValidEmail = EMAIL_REGEX.test(inputValue);
-
-        //Conditionaly add custom input value if it has valid formmat
-        const customEmail = isValidEmail
-          ? [{ label: inputValue, value: inputValue }]
-          : [];
-
-        //Update options
-        setOptions([...filteredOptions, ...customEmail]);
-      })
-      .catch(() => {
-        setError(true);
-      });
+    setEmailInputValue(inputValue);
   };
 
   const onEmailSelect = (value: string): void => {
