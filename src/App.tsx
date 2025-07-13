@@ -72,7 +72,7 @@ function App() {
       {/* Modal */}
       <UiModal
         open={modalOpen}
-        title={"Send Email Form"}
+        title={"Customers Contact Form"}
         onCancel={onEmailModalClose}
         actions={
           <Space>
