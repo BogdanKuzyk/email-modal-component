@@ -5,6 +5,7 @@ export interface UiModalProps {
   readonly title: string | React.ReactNode;
   readonly children?: React.ReactNode;
   readonly onCancel: () => void;
+  readonly actions: React.ReactNode;
 }
 
 function UiModal(props: UiModalProps) {
@@ -18,6 +19,7 @@ function UiModal(props: UiModalProps) {
       width={"auto"}
       height={"auto"}
       destroyOnHidden
+      footer={props.actions}
     >
       {props.children}
     </Modal>

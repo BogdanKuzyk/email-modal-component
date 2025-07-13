@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from "antd";
+import { Button, Space } from "antd";
 import "./App.css";
 import UiModal from "./components/UiModal";
 import EmailForm from "./components/EmailForm";
@@ -26,6 +26,12 @@ function App() {
         open={modalOpen}
         title={"Send Email Form"}
         onCancel={onEmailModalClose}
+        actions={
+          <Space>
+            <Button>Cancel</Button>
+            <Button type="primary">Submit</Button>
+          </Space>
+        }
       >
         <EmailForm />
       </UiModal>
