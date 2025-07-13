@@ -64,8 +64,15 @@ function App() {
         onCancel={onEmailModalClose}
         actions={
           <Space>
-            <Button onClick={onEmailModalClose}>Cancel</Button>
-            <Button type="primary" onClick={onSubmit} loading={loading}>
+            <Button onClick={onEmailModalClose} disabled={loading}>
+              Cancel
+            </Button>
+            <Button
+              type="primary"
+              onClick={onSubmit}
+              loading={loading}
+              disabled={loading}
+            >
               Submit
             </Button>
           </Space>
