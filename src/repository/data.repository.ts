@@ -11,7 +11,6 @@ export async function getCustomers(): Promise<Option[]> {
 
   const customersData: Option[] = data.map((item) => {
     return {
-      id: item.id,
       label: item.email,
       value: item.email,
     };
