@@ -71,7 +71,23 @@ function EmailForm() {
         colon={false}
       >
         {/* Email */}
-        <Form.Item name={"email"} label={"Email"}>
+        <Form.Item
+          name={"email"}
+          label={"Email"}
+          rules={[
+            {
+              validator: (_, value) => {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!value || emailRegex.test(value)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error("Please enter a valid email address")
+                );
+              },
+            },
+          ]}
+        >
           <AutoComplete
             placeholder="Enter email"
             onSearch={onEmailSearch}
