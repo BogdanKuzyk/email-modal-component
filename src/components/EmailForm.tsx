@@ -114,6 +114,7 @@ function EmailForm(props: EmailFormProps) {
             onSearch={onEmailSearch}
             onSelect={onEmailSelect}
             options={options}
+            notFoundContent={"No email found"}
           />
         </Form.Item>
 
