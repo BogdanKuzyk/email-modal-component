@@ -83,6 +83,12 @@ function EmailForm() {
           </Space>
         </Form.Item>
 
+        {/* Email action buttons */}
+        <Space className="mb-2">
+          <Button type="primary">ADD ALL CUSTOMERS</Button>
+          <Button>REMOVE ALL CUSTOMERS</Button>
+        </Space>
+
         {/* Subject */}
         <Form.Item
           name="subject"
